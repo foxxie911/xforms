@@ -99,9 +99,14 @@
 
         showRemoveButton = passwordHash is not null || currentLogins.Count > 1;
 
-        if (HttpMethods.IsGet(HttpContext.Request.Method) && Action == LinkLoginCallbackAction)
+        if (HttpMethods.IsGet(HttpContext.Request.Method))
         {
-            await OnGetLinkLoginCallbackAsync();
+            var userId = await UserManager.GetUserIdAsync(user);
+            var externalLoginInfo = await SignInManager.GetExternalLoginInfoAsync(userId);
+            if (externalLoginInfo is not null)
+            {
+                await OnGetLinkLoginCallbackAsync();
+            }
         }
     }
 
